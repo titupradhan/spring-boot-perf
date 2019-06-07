@@ -3,17 +3,20 @@ package in.dailyhunt.subset.api;
 
 import in.dailyhunt.subset.api.response.SubSetArray;
 import in.dailyhunt.subset.api.resquest.ArraysNumber;
+import io.micrometer.core.annotation.Timed;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-@RestController("/subsets")
+@RestController("/sperf")
 public class SubSetResource {
 
     @PostMapping
+    @Timed(value = "spsubarray",percentiles = {0.75,0.95,0.99},histogram = true)
     public SubSetArray getSubArray(@RequestBody ArraysNumber arraysNumber) {
-        SubSetArray subSetArray = new SubSetArray();
+
         int[][] subsets = getSubsets(arraysNumber.getNumbers());
+        SubSetArray subSetArray = new SubSetArray();
         subSetArray.setArrays(subsets);
         return subSetArray;
     }
