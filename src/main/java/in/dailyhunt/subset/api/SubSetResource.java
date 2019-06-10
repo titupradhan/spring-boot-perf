@@ -7,18 +7,19 @@ import io.micrometer.core.annotation.Timed;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import reactor.core.publisher.Mono;
 
 @RestController("/sperf")
 public class SubSetResource {
 
     @PostMapping
-    @Timed(value = "spsubarray",percentiles = {0.75,0.95,0.99},histogram = true)
-    public SubSetArray getSubArray(@RequestBody ArraysNumber arraysNumber) {
+    @Timed(value = "spsubarray",percentiles = {0.50,0.75,0.95,0.99},histogram = true)
+    public Mono<SubSetArray> getSubArray(@RequestBody ArraysNumber arraysNumber) {
 
         int[][] subsets = getSubsets(arraysNumber.getNumbers());
         SubSetArray subSetArray = new SubSetArray();
         subSetArray.setArrays(subsets);
-        return subSetArray;
+        return Mono.just(subSetArray);
     }
 
     private int[][] getSubsets(int numbers[]) {
